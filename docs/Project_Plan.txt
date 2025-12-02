@@ -1,0 +1,107 @@
+Mini ML-based IDS Platform – Project Milestones
+Phase 0 – Project Setup
+Goal: Have a clean skeleton repo with basic structure, ready to grow.
+Tasks:
+•	Initialize Git repo.
+•	Decide primary tech stack:
+o	Python, scikit-learn, FastAPI/Flask for inference, Streamlit/React/Flask for UI.
+o	Choose queue (Redis vs Kafka).
+•	Set up virtual environment + requirements.txt or pyproject.toml.
+•	Draft initial README with project description & architecture sketch.
+Deliverables:
+•	Repo initialized with basic folders:
+o	data/, src/, src/model/, src/services/, src/ui/, tests/, docker/, etc.
+•	Draft architecture diagram (even hand-drawn, later formalized).
+Phase 1 – Data & Baseline Model
+Goal: Have a reproducible offline training pipeline and a saved model.
+Tasks:
+•	Choose a public IDS dataset.
+•	EDA & preprocessing decisions:
+o	Feature selection, handling categorical features, scaling, etc.
+•	Implement training script:
+o	train.py that:
+	Loads data
+	Splits into train/val/test
+	Trains a baseline model
+	Evaluates (precision, recall, F1)
+	Saves model artifact + preprocessing pipeline (e.g., model.joblib).
+•	Add minimal tests:
+o	Data loading test
+o	Simple test for predict_one_sample() on a dummy row.
+Deliverables:
+•	src/model/train.py and src/model/inference.py.
+•	Saved model artifact and preprocessing.
+•	Model performance report (as markdown or notebook).
+•	Unit tests passing locally.
+Phase 2 – Streaming Simulator & Message Queue
+Goal: Send test samples as a simulated live stream into a queue.
+Tasks:
+•	Add message broker container in docker-compose (Redis or Kafka).
+•	Implement Traffic Generator:
+o	src/services/generator/
+o	Script that:
+	Connects to broker
+	Iterates over test split rows
+	Converts row → JSON “log”
+	Publishes to queue at configurable rate (e.g., env var).
+•	Implement simple logging to track throughput.
+Deliverables:
+•	Generator service runnable as:
+o	docker-compose up generator queue
+•	Documentation on how to run the simulator & what each message looks like.
+
+Phase 3 – Model Inference Service
+Goal: Deploy the model as a service consuming messages asynchronously.
+Tasks:
+•	Implement a consumer that subscribes to the queue.
+•	Load trained model + preprocessing at startup (from volume or image).
+•	Process messages one by one:
+o	Decode JSON → features → preprocess → predict.
+o	Produce output:
+	Original log
+	Prediction (normal / suspicious)
+	Score/probability
+	Timestamp
+o	Publish to a results topic/queue or store in small DB (optional).
+•	Optionally expose a basic HTTP health endpoint (e.g., /health).
+Deliverables:
+•	Classifier service container.
+•	End-to-end pipeline: generator → queue → classifier → results topic.
+Phase 4 – UI & Alerts
+Goal: Visualize traffic and alerts in real-time.
+Tasks:
+•	Decide UI tech:
+o	Fastest path: Streamlit reading from queue / small local store.
+o	Or Flask/React with WebSockets (more work).
+•	UI features:
+o	Live table of last N events (with color for suspicious).
+o	Aggregated metrics: total processed, suspicious ratio, last 5 minutes summary.
+o	“Alert” panel: highlight suspicious events.
+•	Provide a simple “demo scenario”:
+o	Start stack, run generator for 1–2 minutes, watch UI.
+Deliverables:
+•	UI service container.
+•	Short demo script in README (step-by-step how to run everything and what to expect).
+Phase 5 – Dockerization & CI/CD
+Goal: Apply MLOps basics: reproducibility + automation.
+Tasks:
+•	Write Dockerfiles for:
+o	Model training (optional, or just local).
+o	Generator service.
+o	Classifier service.
+o	UI service.
+•	Create docker-compose.yml to wire:
+o	Queue + all services + volumes.
+•	Set up CI:
+o	GitHub Actions workflow:
+	Install deps
+	Run tests
+	Run linter (e.g., flake8 / ruff)
+	Optionally: build Docker images (without pushing).
+•	Optionally add a Makefile for common commands (make train, make run, etc.).
+Deliverables:
+•	All services runnable with a single command:
+o	docker-compose up (or docker compose up).
+•	CI pipeline passing on main branch.
+•	CI status badge in README.
+
