@@ -1,0 +1,21 @@
+# Traffic Generator Service Dependencies
+# ======================================
+
+# Redis client for Python
+# Used to publish messages to the queue
+redis>=4.5.0
+
+# Pandas for data manipulation
+# We use this to load and process the CSV dataset
+pandas>=2.0.0
+
+# NumPy (dependency of pandas, but we use it directly too)
+numpy>=1.24.0
+
+# Kaggle Hub for downloading the dataset
+# This lets us use the same data source as the training notebook
+kagglehub>=0.2.0
+
+# Scikit-learn for train_test_split
+# We need this to replicate the exact same test split as the notebook
+scikit-learn>=1.3.0
