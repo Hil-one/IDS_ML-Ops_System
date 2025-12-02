@@ -40,7 +40,7 @@ This system simulates a real-world IDS deployment with:
 
 ## Features
 
-### 🎯 **Core Components**
+### **Core Components**
 
 1. **Traffic Generator** (`src/services/generator/`)
    - Streams network traffic from IDS dataset
@@ -65,14 +65,14 @@ This system simulates a real-world IDS deployment with:
    - Statistics and visualizations
    - WebSocket-based updates
 
-### ✨ **Key Features**
+### **Key Features**
 
-- ⚡ **Real-time Processing**: Sub-second latency from traffic to alert
-- 🎨 **Modern UI**: React dashboard with live updates
-- 🐳 **Fully Dockerized**: One-command deployment
-- 📊 **Comprehensive Metrics**: Attack rates, protocol distribution, throughput
-- 🧪 **Tested**: Unit tests for core services
-- 📚 **Well Documented**: READMEs for every component
+-  **Real-time Processing**: Sub-second latency from traffic to alert
+-  **Modern UI**: React dashboard with live updates
+-  **Fully Dockerized**: One-command deployment
+-  **Comprehensive Metrics**: Attack rates, protocol distribution, throughput
+-  **Tested**: Unit tests for core services
+-  **Well Documented**: READMEs for every component
 
 ## Quick Start
 
@@ -409,7 +409,7 @@ python src/model/verify_artifacts.py
 
 ## Security Considerations
 
-⚠️ **Important for Production Deployments:**
+ **Important for Production Deployments:**
 
 1. **Change Default Secrets**: Update `SECRET_KEY` in docker-compose.yml
 2. **Enable HTTPS**: Use reverse proxy (nginx, Traefik) with SSL
@@ -481,4 +481,4 @@ For questions or issues:
 
 ---
 
-**Built with ❤️ as an MLOps demonstration project**
+**Built with passion as an MLOps demonstration project**
