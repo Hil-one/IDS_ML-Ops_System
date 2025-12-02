@@ -10,7 +10,6 @@ Usage:
 
 import os
 import pandas as pd
-import numpy as np
 from pathlib import Path
 import joblib
 from datetime import datetime
@@ -31,6 +30,9 @@ from sklearn.tree import DecisionTreeClassifier
 
 import kagglehub
 
+# Import preprocessing utilities
+from preprocessing import log2_transform
+
 
 # Configuration
 RANDOM_SEED = 635458
@@ -48,13 +50,6 @@ DATA_DIR = PROJECT_ROOT / "data"
 # Create directories if they don't exist
 MODELS_DIR.mkdir(exist_ok=True)
 DATA_DIR.mkdir(parents=True, exist_ok=True)
-
-
-def log2_transform(array):
-    """Apply log2 transformation to byte features, setting 0 values to 0."""
-    array = array.copy()
-    array[array > 0] = np.log2(array[array > 0])
-    return array
 
 
 def load_data():

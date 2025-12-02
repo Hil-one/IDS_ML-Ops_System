@@ -1,0 +1,17 @@
+# Model Training and Inference Dependencies
+# ==========================================
+
+# Core ML libraries
+scikit-learn>=1.3.0
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Model serialization
+joblib>=1.3.0
+
+# Dataset download
+kagglehub>=0.2.0
+
+# Optional: For enhanced visualizations during training
+# matplotlib>=3.7.0
+# seaborn>=0.12.0
