@@ -1,0 +1,120 @@
+version: '3.8'
+
+services:
+  # Redis - Message broker for pub/sub and queuing
+  redis:
+    image: redis:7-alpine
+    container_name: ids-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - ids-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # Traffic Generator - Simulates network traffic from test dataset
+  generator:
+    build:
+      context: ./src/services/generator
+      dockerfile: Dockerfile
+    container_name: ids-generator
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_QUEUE=traffic_queue
+      - TRAFFIC_RATE=10
+      - GENERATOR_MODE=sequential
+      - GENERATOR_LOOP=true
+      - LOG_LEVEL=INFO
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - ids-network
+    restart: unless-stopped
+
+  # Classifier Service - ML inference on incoming traffic
+  classifier:
+    build:
+      context: ./src/services/classifier
+      dockerfile: Dockerfile
+    container_name: ids-classifier
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_QUEUE=traffic_queue
+      - REDIS_RESULTS_CHANNEL=classification_results
+      - MODEL_PATH=/app/models
+      - BATCH_TIMEOUT=1
+      - HEALTH_CHECK_PORT=8000
+      - LOG_LEVEL=INFO
+    volumes:
+      # Mount trained model artifacts
+      - ./models:/app/models:ro
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - ids-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  # UI Backend - WebSocket bridge from Redis to web clients
+  ui-backend:
+    build:
+      context: ./src/ui
+      dockerfile: Dockerfile.backend
+    container_name: ids-ui-backend
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_RESULTS_CHANNEL=classification_results
+      - SERVER_PORT=5000
+      - LOG_LEVEL=INFO
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+    ports:
+      - "5000:5000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - ids-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # UI Frontend - React dashboard
+  ui-frontend:
+    build:
+      context: ./src/ui
+      dockerfile: Dockerfile
+    container_name: ids-ui-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - ui-backend
+    networks:
+      - ids-network
+    restart: unless-stopped
+
+networks:
+  ids-network:
+    driver: bridge
+    name: ids-network
+
+volumes:
+  redis-data:
