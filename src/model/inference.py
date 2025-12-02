@@ -25,6 +25,9 @@ import joblib
 from typing import Dict, List, Union
 import warnings
 
+# Import preprocessing utilities (required for loading serialized preprocessor)
+from preprocessing import log2_transform  # noqa: F401
+
 warnings.filterwarnings("ignore")
 
 
