@@ -1,0 +1,135 @@
+.log-entry {
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+  transition: transform 0.2s;
+}
+
+.log-entry:hover {
+  transform: translateX(2px);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.log-entry-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.log-entry.normal .log-entry-indicator {
+  background: var(--color-normal);
+}
+
+.log-entry.attack .log-entry-indicator {
+  background: var(--color-attack);
+}
+
+.log-entry-content {
+  padding: 12px 16px 12px 20px;
+}
+
+.log-entry-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.log-id {
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.log-timestamp {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.log-prediction {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.log-prediction.normal {
+  background: rgba(0, 186, 124, 0.15);
+  color: var(--color-normal);
+}
+
+.log-prediction.attack {
+  background: rgba(244, 33, 46, 0.15);
+  color: var(--color-attack);
+}
+
+.log-entry-details {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.log-detail {
+  display: flex;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.detail-label {
+  color: var(--text-secondary);
+}
+
+.detail-value {
+  color: var(--text-primary);
+  font-weight: 500;
+  font-family: 'Fira Code', monospace;
+}
+
+.confidence-bar-container {
+  margin-top: 8px;
+}
+
+.confidence-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.confidence-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+.confidence-fill.normal {
+  background: var(--color-normal);
+}
+
+.confidence-fill.attack {
+  background: var(--color-attack);
+}

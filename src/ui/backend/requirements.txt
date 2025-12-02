@@ -1,0 +1,20 @@
+# UI Backend WebSocket Bridge Dependencies
+# ==========================================
+
+# Flask web framework
+Flask>=3.0.0
+
+# Flask-SocketIO for WebSocket support
+flask-socketio>=5.3.0
+
+# Flask-CORS for cross-origin requests
+flask-cors>=4.0.0
+
+# Python-SocketIO for WebSocket handling
+python-socketio>=5.11.0
+
+# Redis client
+redis>=4.5.0
+
+# Event handling
+eventlet>=0.33.0
