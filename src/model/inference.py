@@ -26,7 +26,12 @@ from typing import Dict, List, Union
 import warnings
 
 # Import preprocessing utilities (required for loading serialized preprocessor)
-from preprocessing import log2_transform  # noqa: F401
+try:
+    # Try absolute import first (when running as module)
+    from src.model.preprocessing import log2_transform  # noqa: F401
+except ImportError:
+    # Fallback to relative import (when running inference.py directly)
+    from preprocessing import log2_transform  # noqa: F401
 
 warnings.filterwarnings("ignore")
 
@@ -301,3 +306,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# ******

@@ -7,10 +7,10 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy package files
-COPY package.json package-lock.json* ./
+COPY package.json ./
 
 # Install dependencies
-RUN npm ci --silent
+RUN npm install --silent
 
 # Copy source code
 COPY . .

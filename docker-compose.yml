@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   # Redis - Message broker for pub/sub and queuing
@@ -82,7 +82,12 @@ services:
       - REDIS_RESULTS_CHANNEL=classification_results
       - SERVER_PORT=5000
       - LOG_LEVEL=INFO
-      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      # SECURITY: Set SECRET_KEY via environment variable or .env file
+      # Generate with: openssl rand -hex 32
+      # NEVER use the default in production!
+      - SECRET_KEY=${SECRET_KEY:?SECRET_KEY environment variable is required}
+      # CORS: Allowed origins (comma-separated)
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000,http://localhost:80}
     ports:
       - "5000:5000"
     depends_on:

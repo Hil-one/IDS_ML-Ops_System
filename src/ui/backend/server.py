@@ -10,7 +10,7 @@ import os
 import json
 import logging
 import redis
-from flask import Flask
+from flask import Flask, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from threading import Thread
@@ -29,15 +29,26 @@ REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 REDIS_RESULTS_CHANNEL = os.getenv("REDIS_RESULTS_CHANNEL", "classification_results")
 SERVER_PORT = int(os.getenv("SERVER_PORT", 5000))
 
+# Security: Get allowed CORS origins from environment
+# Format: comma-separated list like "http://localhost:3000,http://localhost:80"
+CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:80").split(",")
+
 # Create Flask app
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "your-secret-key-here")
-CORS(app)
 
-# Create SocketIO instance
+# Security: Require SECRET_KEY to be set via environment variable
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    logger.error("SECRET_KEY environment variable is required for security")
+    raise ValueError("SECRET_KEY environment variable must be set")
+app.config['SECRET_KEY'] = SECRET_KEY
+
+CORS(app, origins=CORS_ORIGINS)
+
+# Create SocketIO instance with restricted CORS
 socketio = SocketIO(
     app,
-    cors_allowed_origins="*",
+    cors_allowed_origins=CORS_ORIGINS,
     async_mode='threading',
     logger=True,
     engineio_logger=False
@@ -63,16 +74,16 @@ def health_check():
 @socketio.on('connect')
 def handle_connect():
     """Handle client connection."""
-    logger.info(f"Client connected: {request.sid if 'request' in dir() else 'unknown'}")
-    connected_clients.add(request.sid if 'request' in dir() else None)
+    logger.info(f"Client connected: {request.sid}")
+    connected_clients.add(request.sid)
     emit('connection_status', {'status': 'connected'})
 
 
 @socketio.on('disconnect')
 def handle_disconnect():
     """Handle client disconnection."""
-    logger.info(f"Client disconnected: {request.sid if 'request' in dir() else 'unknown'}")
-    connected_clients.discard(request.sid if 'request' in dir() else None)
+    logger.info(f"Client disconnected: {request.sid}")
+    connected_clients.discard(request.sid)
 
 
 def redis_subscriber():
@@ -192,12 +203,18 @@ def main():
 
     # Start Flask-SocketIO server
     logger.info(f"Starting WebSocket server on port {SERVER_PORT}...")
+
+    # WARNING: For production deployments, use a production WSGI server like:
+    # - gunicorn with eventlet: gunicorn --worker-class eventlet -w 1 server:app
+    # - waitress: waitress-serve --listen=*:5000 server:app
+    # The socketio.run() method uses Werkzeug development server which is not production-ready
+    # allow_unsafe_werkzeug=True is acceptable for development/testing only
     socketio.run(
         app,
         host='0.0.0.0',
         port=SERVER_PORT,
         debug=False,
-        allow_unsafe_werkzeug=True
+        allow_unsafe_werkzeug=True  # Only for dev/testing - use production server in production
     )
 
 

@@ -4,25 +4,25 @@ Real-time web dashboard for monitoring network intrusion detection system activi
 
 ## Features
 
-### 📊 **Real-Time Dashboard**
+### **Real-Time Dashboard**
 - Live traffic log stream with color-coded entries
 - Green (🟢) for normal traffic
 - Red (🔴) for detected attacks
 - Auto-scrolling with pause/resume control
 
-### 📈 **Statistics Panel**
+### **Statistics Panel**
 - Attack detection rate percentage
 - Total attacks vs normal traffic counts
 - Protocol distribution pie chart (TCP, UDP, ICMP)
 - Messages per second throughput
 
-### 🚨 **Alert System**
+### **Alert System**
 - Sliding alert banner for detected attacks
 - Recent alerts list with timestamps
 - Auto-dismiss after 5 seconds
 - Confidence scores for each detection
 
-### 🎨 **Modern UI**
+### **Modern UI**
 - Dark theme optimized for long monitoring sessions
 - Responsive design (desktop and tablet)
 - Smooth animations and transitions
