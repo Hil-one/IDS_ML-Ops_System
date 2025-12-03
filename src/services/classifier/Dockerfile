@@ -14,17 +14,18 @@ WORKDIR /app
 RUN useradd --create-home --shell /bin/bash appuser
 
 # Install dependencies first (for better layer caching)
-COPY requirements.txt .
+COPY src/services/classifier/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the classifier service code
-COPY main.py .
+COPY src/services/classifier/main.py .
 
 # Copy the model inference module from src/model
 # This is needed because the classifier imports from src.model.inference
 RUN mkdir -p /app/src/model
-COPY ../../model/__init__.py /app/src/model/
-COPY ../../model/inference.py /app/src/model/
+COPY src/model/__init__.py /app/src/model/
+COPY src/model/inference.py /app/src/model/
+COPY src/model/preprocessing.py /app/src/model/
 
 # Create models directory for mounting trained model artifacts
 RUN mkdir -p /app/models && chown -R appuser:appuser /app/models

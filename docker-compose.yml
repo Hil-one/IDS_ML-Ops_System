@@ -40,8 +40,8 @@ services:
   # Classifier Service - ML inference on incoming traffic
   classifier:
     build:
-      context: ./src/services/classifier
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./src/services/classifier/Dockerfile
     container_name: ids-classifier
     environment:
       - REDIS_HOST=redis
