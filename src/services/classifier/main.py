@@ -26,6 +26,15 @@ import signal
 
 # Add parent directory to path to import from src.model
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
+
+# CRITICAL: Import preprocessing module BEFORE loading model
+# This ensures log2_transform and other functions are available when
+# joblib unpickles the preprocessor (which contains FunctionTransformers)
+# The model was trained with "from preprocessing import log2_transform"
+# so we need to make it available under that name in sys.modules
+from src.model import preprocessing  # noqa: F401
+sys.modules['preprocessing'] = preprocessing  # Make it available as 'preprocessing'
+
 from src.model.inference import IDSClassifier
 
 # FastAPI for health/metrics endpoints
