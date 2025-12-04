@@ -10,9 +10,11 @@ Usage:
 
 import os
 import pandas as pd
+import numpy as np
 from pathlib import Path
 import joblib
 from datetime import datetime
+import sklearn
 
 from sklearn.model_selection import train_test_split, cross_validate
 from sklearn.preprocessing import MinMaxScaler, FunctionTransformer, OneHotEncoder
@@ -327,6 +329,10 @@ def save_artifacts(model, preprocessor, drop_cols, results):
         "test_metrics": results["test"],
         "val_metrics": results["val"],
         "cv_metrics": {k: v[0] for k, v in results["cv"].items()},  # mean values
+        # CRITICAL: Record sklearn version for compatibility checks
+        "sklearn_version": sklearn.__version__,
+        "pandas_version": pd.__version__,
+        "numpy_version": np.__version__
     }
 
     metadata_path = MODELS_DIR / "model_metadata.joblib"
